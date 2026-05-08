@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>NFC-e | Controle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vertis: {
+              orange: '#F97316',
+              dark: '#0B1220'
+            }
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(2, 6, 23, 0.10)',
+            card: '0 8px 20px rgba(2, 6, 23, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Favicons e Icones -->
+  <link rel="apple-touch-icon" href="https://v1.laudosonline.com.br/assets/images/apple-touch-icon.png" sizes="180x180">
+  <link rel="icon" type="image/png" href="https://v1.laudosonline.com.br/assets/images/favicon.png" sizes="32x32">
+
+  <style>
+    .fade-in {
+      animation: fadeInUp 0.25s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .count {
+      transition: all .3s ease;
+    }
+
+    .rotate-180 {
+      transform: rotate(180deg);
+    }
+
+    /* Menu moderno (sem @apply) — compatível com Tailwind via CDN */
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .625rem 1.25rem;
+      /* px-5 py-2.5 */
+      color: rgb(51 65 85);
+      /* slate-700 */
+      text-decoration: none;
+      position: relative;
+      transition: background-color .2s ease, color .2s ease, transform .2s ease;
+    }
+
+    .menu-item:hover {
+      background: rgb(241 245 249);
+      /* slate-100 */
+      color: rgb(2 6 23);
+      /* near black */
+      transform: translateX(4px);
+    }
+
+    .menu-icon {
+      width: 18px;
+      height: 18px;
+      opacity: .8;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .menu-item:hover .menu-icon {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+
+    .metric-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, .95);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .98), rgba(248, 250, 252, .92));
+      box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 42px rgba(15, 23, 42, .12);
+      border-color: rgba(249, 115, 22, .28);
+    }
+
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      right: -28px;
+      top: -28px;
+      width: 96px;
+      height: 96px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(249, 115, 22, .14), transparent 68%);
+      pointer-events: none;
+    }
+
+    .mini-chart {
+      width: 148px;
+      height: 148px;
+      border-radius: 999px;
+      background: conic-gradient(#e2e8f0 0deg 360deg);
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .06), 0 14px 30px rgba(15, 23, 42, .08);
+      flex: 0 0 auto;
+    }
+
+    .mini-chart::after {
+      content: '';
+      position: absolute;
+      inset: 28px;
+      border-radius: 999px;
+      background: white;
+      box-shadow: inset 0 0 0 1px rgba(226, 232, 240, .9);
+    }
+
+    .mini-chart-center {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      pointer-events: none;
+    }
+
+    .legend-dot {
+      width: .65rem;
+      height: .65rem;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 backdrop-blur bg-gradient-to-r from-vertis-dark via-slate-900 to-slate-950/95 
+    text-white px-6 py-4 flex justify-between items-center shadow-lg shadow-black/10 border-b border-white/10">
+
+    <!-- ESQUERDA -->
+    <div class="flex items-center gap-4">
+
+      <!-- MENU SANDUÍCHE -->
+      <nav class="relative">
+        <button id="menuBtn" class="p-2 rounded-lg hover:bg-slate-800 transition" aria-label="Abrir menu"
+          aria-expanded="false" aria-controls="menuPanel">
+
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <!-- PAINEL -->
+        <div id="menuPanel" class="absolute left-0 mt-3 w-80 rounded-2xl bg-white text-slate-800 shadow-2xl
+       hidden overflow-hidden border border-slate-200 backdrop-blur-xl
+       origin-top-left transform transition-all duration-200">
+
+          <!-- HEADER -->
+          <div class="px-5 py-4 border-b bg-gradient-to-r from-slate-50 to-white">
+            <div class="text-xs uppercase tracking-wider text-slate-500 font-semibold">
+              Navegação
+            </div>
+          </div>
+
+          <div class="py-3 text-sm">
+
+            <!-- INÍCIO -->
+            <a href="index.html" class="menu-item">
+              <!-- Ícone Home -->
+              <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.75L12 4l9 6.75M5 10v9h14v-9" />
+              </svg>
+              Início
+            </a>
+
+            <!-- PUBLICAÇÃO DE LAUDOS -->
+            <a href="pix.html" class="menu-item">
+              <!-- Ícone Chart -->
+              <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8" />
+              </svg>
+              PIX | Controle
+            </a>
+
+          </div>
+        </div>
+      </nav>
+
+
+      <!-- TEXTO -->
+      <h1 class="text-lg font-semibold tracking-wide whitespace-nowrap">
+        Vertis <span class="text-vertis-orange">•</span> NFe
+      </h1>
+    </div>
+
+    <!-- DIREITA -->
+    <div class="flex items-center gap-4">
+      <span id="refreshIndicator" class="text-xs text-slate-300 opacity-0 transition-opacity">
+        Atualizando...
+      </span>
+
+      <!-- Logs e Erros (no header) -->
+      <a href="/nfe/controle_nfe_logs.html" title="Logs e Erros" class="group relative inline-flex items-center justify-center
+            h-10 w-10 rounded-xl
+            bg-white/10 border border-white/15
+            hover:bg-white/15 hover:border-white/25
+            transition-all duration-200
+            focus:outline-none focus:ring-2 focus:ring-white/30">
+
+        <!-- Ping discreto -->
+        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+        </span>
+
+        <!-- Ícone -->
+        <button id="toggleViewBtn" class="group relative inline-flex items-center justify-center
+         h-10 w-10 rounded-xl
+         bg-white/10 border border-white/15
+         hover:bg-white/15 hover:border-white/25
+         transition-all duration-200
+         focus:outline-none focus:ring-2 focus:ring-white/30" title="Alternar visão">
+
+          <svg id="toggleViewIcon" xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-white/90 transition-transform duration-300 ease-in-out" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+
+        </button>
+
+        <!-- Tooltip -->
+        <span class="pointer-events-none absolute right-0 top-11
+                 opacity-0 translate-y-1
+                 group-hover:opacity-100 group-hover:translate-y-0
+                 transition-all duration-200
+                 text-[11px] px-2 py-1 rounded-lg
+                 bg-slate-900 text-white shadow-lg whitespace-nowrap">
+          Logs e Erros
+        </span>
+      </a>
+
+      <img src="https://v1.laudosonline.com.br/assets/images/logo-primary-white.png" alt="Vertis" class="h-8" />
+    </div>
+
+  </header>
+
+  <main class="p-6 flex-1 space-y-6">
+
+    <!-- KPIs / WIDGETS PIX -->
+    <section class="space-y-4">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="metric-card rounded-3xl p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Total</p>
+              <p id="kpi_total_pix" class="mt-2 text-3xl font-black text-slate-900 count">0</p>
+              <p class="mt-1 text-xs text-slate-500">registros encontrados</p>
+            </div>
+            <div
+              class="h-11 w-11 rounded-2xl bg-orange-50 text-vertis-orange flex items-center justify-center border border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v14l-4-2-3 2-3-2-4 2V6a2 2 0 012-2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card rounded-3xl p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Valor total</p>
+              <p id="kpi_valor_total" class="mt-2 text-3xl font-black text-slate-900 count">R$ 0,00</p>
+              <p class="mt-1 text-xs text-slate-500">somatório dos PIX</p>
+            </div>
+            <div
+              class="h-11 w-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 10v2" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card rounded-3xl p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Caixa</p>
+              <p id="kpi_origem_caixa" class="mt-2 text-3xl font-black text-slate-900 count">0</p>
+              <p id="kpi_origem_caixa_pct" class="mt-1 text-xs text-slate-500">0% do total</p>
+            </div>
+            <div
+              class="h-11 w-11 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-100">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 10h18M5 10V7a2 2 0 012-2h10a2 2 0 012 2v3M6 10v9h12v-9" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card rounded-3xl p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Faturamento</p>
+              <p id="kpi_origem_faturamento" class="mt-2 text-3xl font-black text-slate-900 count">0</p>
+              <p id="kpi_origem_faturamento_pct" class="mt-1 text-xs text-slate-500">0% do total</p>
+            </div>
+            <div
+              class="h-11 w-11 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center border border-violet-100">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 14h6M9 10h6M7 3h10v18l-5-3-5 3z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div class="bg-white rounded-3xl shadow-card border border-slate-200 p-5 overflow-hidden">
+          <div class="flex items-start justify-between gap-4 mb-5">
+            <div>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Distribuição</p>
+              <h2 class="text-lg font-black text-slate-900">Origem do PIX</h2>
+            </div>
+            <span
+              class="text-[11px] px-2.5 py-1 rounded-full bg-orange-50 text-vertis-orange font-bold border border-orange-100">Caixa
+              x Faturamento</span>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center gap-6">
+            <div id="chartOrigem" class="mini-chart">
+              <div class="mini-chart-center">
+                <span id="chartOrigemTotal" class="text-2xl font-black text-slate-900">0</span>
+                <span class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">PIX</span>
+              </div>
+            </div>
+            <div id="legendOrigem" class="w-full space-y-2"></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-card border border-slate-200 p-5 overflow-hidden">
+          <div class="flex items-start justify-between gap-4 mb-5">
+            <div>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Clientes</p>
+              <h2 class="text-lg font-black text-slate-900">PIX por unidade</h2>
+            </div>
+            <span id="kpi_clientes_unicos"
+              class="text-[11px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">0
+              clientes</span>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center gap-6">
+            <div id="chartUnidades" class="mini-chart">
+              <div class="mini-chart-center">
+                <span id="chartUnidadesTotal" class="text-2xl font-black text-slate-900">0</span>
+                <span class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">PIX</span>
+              </div>
+            </div>
+            <div id="legendUnidades" class="w-full space-y-2 max-h-44 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- FILTRO -->
+    <div class="bg-white rounded-2xl shadow p-4 flex items-center gap-4">
+      <input id="filterInput" type="text" placeholder="🔍 Filtrar por código ou nome da unidade..."
+        class="w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring" oninput="applyFilter()" />
+      <span class="text-sm text-slate-500 whitespace-nowrap">Auto-refresh 5 min</span>
+    </div>
+
+    <!-- TABELA -->
+    <div class="bg-white rounded-2xl shadow overflow-x-auto max-h-[70vh]">
+      <table class="min-w-full text-sm border-collapse">
+        <thead class="bg-slate-200 sticky top-0 z-40">
+          <tr id="table-head"></tr>
+        </thead>
+        <tbody id="table-body" class="divide-y"></tbody>
+        <tfoot class="bg-slate-100 sticky bottom-0 font-semibold">
+          <tr id="table-footer"></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- PAGINAÇÃO -->
+    <div class="flex items-center justify-between px-2 text-sm text-slate-600">
+      <span id="pageInfo"></span>
+      <div id="pagination" class="flex gap-1"></div>
+    </div>
+
+  </main>
+
+  <!-- MODAL DETALHES PIX -->
+  <div id="detailsModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="detailsModalTitle" role="dialog"
+    aria-modal="true">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onclick="closeDetailsModal()"></div>
+
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden fade-in">
+        <div
+          class="px-6 py-5 bg-gradient-to-r from-vertis-dark via-slate-900 to-slate-950 text-white flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-[0.2em] text-orange-200 font-semibold">Detalhes do PIX</p>
+            <h2 id="detailsModalTitle" class="mt-1 text-xl font-bold">Registro selecionado</h2>
+            <p id="detailsModalSubtitle" class="mt-1 text-sm text-slate-300"></p>
+          </div>
+
+          <button type="button" onclick="closeDetailsModal()"
+            class="h-10 w-10 inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 transition"
+            aria-label="Fechar modal">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6 bg-slate-50 max-h-[75vh] overflow-y-auto">
+          <div id="detailsHighlights" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5"></div>
+          <div id="detailsContent" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const endpoint = "/api/pix";
+    //const endpoint = "http://localhost:9000/api/V1.1/get_controle_pix/118";
+    //const endpoint = "http://constellation.newvertis.com.br/vertis/VertisConnect.dll/api/V1.1/get_controle_pix/118";
+
+    const PAGE_SIZE = 10;
+    let currentPage = 1;
+
+    const columns = [
+      { key: 'cod_unid_oper', label: 'Oper', sticky: true, width: 50 },
+      { key: 'nom_unid_oper', label: 'Cliente', sticky: true, width: 250 },
+
+      { key: 'dth_envio', label: 'Dth. Envio' },
+      { key: 'nom_fantasia', label: 'Parceiro' },
+      { key: 'vlr_pix', label: 'Valor R$', sum: true },
+      { key: 'chave_pix', label: 'Chave PIX' },
+      { key: 'id_transacao_origem', label: 'TxID' },
+      { key: 'origem', label: 'Origem' },
+      { key: 'situacao', label: 'Situação' },
+      { key: '__actions', label: '', action: true, width: 70 }
+    ];
+
+    let originalData = [], filteredData = [], sortKey = null, sortAsc = true;
+
+    const getPagedData = () =>
+      filteredData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    const totalPages = () =>
+      Math.ceil(filteredData.length / PAGE_SIZE) || 1;
+
+    /* ===== KPIs ===== */
+    const pct = (valor, total) =>
+      total > 0 ? ((valor / total) * 100).toFixed(1) + '%' : '0%';
+
+    const setBar = (id, valor, total) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const pct = total > 0 ? Math.min((valor / total) * 100, 100) : 0;
+      el.style.width = pct + '%';
+    };
+
+    const parseBrDateTime = (s) => {
+      // "DD/MM/YYYY HH:MM:SS"
+      if (!s || typeof s !== 'string') return null;
+      const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})(?::(\d{2}))?/);
+      if (!m) return null;
+      const [_, dd, mm, yyyy, HH, MI, SS] = m;
+      return new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(HH), Number(MI), Number(SS || 0));
+    };
+
+    const parseIsoDateTime = (value) => {
+      if (!value) return null;
+      // Esperado: YYYY-MM-DD HH:mm:SS
+      const [datePart, timePart] = value.split(' ');
+      if (!datePart || !timePart) return null;
+
+      const [year, month, day] = datePart.split('-').map(Number);
+      const [hour, minute, second] = timePart.split(':').map(Number);
+
+      return new Date(year, month - 1, day, hour, minute, second);
+    };
+
+    const formatDateTimeBR = (date) => {
+      if (!(date instanceof Date) || isNaN(date)) return '';
+
+      const pad = (n) => String(n).padStart(2, '0');
+
+      const day = pad(date.getDate());
+      const month = pad(date.getMonth() + 1);
+      const year = date.getFullYear();
+
+      const hour = pad(date.getHours());
+      const minute = pad(date.getMinutes());
+      const second = pad(date.getSeconds());
+
+      return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+    };
+
+    const minutesSince = (dt) => {
+      if (!dt) return null;
+      const diffMs = Date.now() - dt.getTime();
+      return Math.floor(diffMs / 60000);
+    };
+
+    const isFresh = (dt, maxMinutes = 30) => {
+      const mins = minutesSince(dt);
+      if (mins == null) return null;     // sem data
+      if (mins < 0) return true;         // data no "futuro" (relógio/servidor), considera OK
+      return mins <= maxMinutes;
+    };
+
+    const renderFreshIcon = (dt, maxMinutes = 30) => {
+      const ok = isFresh(dt, maxMinutes);
+      const dtBr = formatDateTimeBR(dt);
+
+      if (ok === null) {
+        return `<span class="inline-flex items-center gap-2 text-slate-400" title="Sem data">
+      <span class="h-2 w-2 rounded-full bg-slate-300"></span><span class="text-xs">—</span>
+    </span>`;
+      }
+
+      if (ok) {
+        return `<span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"
+      title="${dtBr}">
+      ✓
+    </span>`;
+      }
+
+      const mins = minutesSince(dt);
+      return `<span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-rose-50 text-rose-700 border border-rose-200"
+    title="${dtBr})">
+    !
+  </span>`;
+    };
+
+    const normalizeText = (value) =>
+      String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+
+    const countBy = (data, key) => {
+      return data.reduce((acc, row) => {
+        const raw = row[key] || 'Não informado';
+        const label = String(raw).trim() || 'Não informado';
+        acc[label] = (acc[label] || 0) + 1;
+        return acc;
+      }, {});
+    };
+
+    const topEntries = (obj, limit = 6) =>
+      Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, limit);
+
+    const chartColors = ['#F97316', '#0F172A', '#38BDF8', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#64748B'];
+
+    function renderPieChart(chartId, legendId, entries, total) {
+      const chart = document.getElementById(chartId);
+      const legend = document.getElementById(legendId);
+      if (!chart || !legend) return;
+
+      if (!total || entries.length === 0) {
+        chart.style.background = 'conic-gradient(#e2e8f0 0deg 360deg)';
+        legend.innerHTML = '<p class="text-sm text-slate-400">Sem dados para exibir.</p>';
+        return;
+      }
+
+      let start = 0;
+      const gradient = entries.map(([label, value], index) => {
+        const deg = (value / total) * 360;
+        const color = chartColors[index % chartColors.length];
+        const part = `${color} ${start}deg ${start + deg}deg`;
+        start += deg;
+        return part;
+      }).join(', ');
+
+      chart.style.background = `conic-gradient(${gradient})`;
+
+      legend.innerHTML = entries.map(([label, value], index) => {
+        const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+        const color = chartColors[index % chartColors.length];
+        return `
+          <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-3 py-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="legend-dot" style="background:${color}"></span>
+              <span class="text-sm font-semibold text-slate-700 truncate" title="${label}">${label}</span>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-sm font-black text-slate-900">${value}</p>
+              <p class="text-[10px] text-slate-400 font-bold">${percent}%</p>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function updateKPIs() {
+      const total = filteredData.length;
+      const valorTotal = filteredData.reduce((t, r) => t + Number(r.vlr_pix || 0), 0);
+      const caixa = filteredData.filter(r => normalizeText(r.origem).includes('caixa')).length;
+      const faturamento = filteredData.filter(r => normalizeText(r.origem).includes('faturamento')).length;
+      const clientesUnicos = new Set(filteredData.map(r => r.nom_unid_oper || 'Não informado')).size;
+
+      document.getElementById('kpi_total_pix').textContent = total;
+      document.getElementById('kpi_valor_total').textContent = formatCurrencyBR(valorTotal);
+      document.getElementById('kpi_origem_caixa').textContent = caixa;
+      document.getElementById('kpi_origem_faturamento').textContent = faturamento;
+      document.getElementById('kpi_origem_caixa_pct').textContent = `${pct(caixa, total)} do total`;
+      document.getElementById('kpi_origem_faturamento_pct').textContent = `${pct(faturamento, total)} do total`;
+      document.getElementById('kpi_clientes_unicos').textContent = `${clientesUnicos} cliente${clientesUnicos === 1 ? '' : 's'}`;
+
+      const origemEntries = topEntries(countBy(filteredData, 'origem'), 8);
+      const unidadeEntries = topEntries(countBy(filteredData, 'nom_unid_oper'), 8);
+
+      document.getElementById('chartOrigemTotal').textContent = total;
+      document.getElementById('chartUnidadesTotal').textContent = total;
+
+      renderPieChart('chartOrigem', 'legendOrigem', origemEntries, total);
+      renderPieChart('chartUnidades', 'legendUnidades', unidadeEntries, total);
+    }
+
+
+    const fieldLabels = {
+      id: 'ID',
+      dth_envio: 'Data/Hora de envio',
+      cod_unid_oper: 'Cód. operação',
+      nom_unid_oper: 'Unidade operacional',
+      cod_parceiro: 'Cód. parceiro',
+      num_cnpj_cpf: 'CPF/CNPJ',
+      nom_fantasia: 'Parceiro',
+      vlr_pix: 'Valor do PIX',
+      id_transacao_origem: 'TxID / Transação de origem',
+      id_conta: 'ID da conta',
+      desc_conta: 'Conta',
+      chave_pix: 'Chave PIX',
+      origem: 'Origem',
+      situacao: 'Situação',
+      recordcount: 'Record count'
+    };
+
+    const formatCpfCnpj = (value) => {
+      const digits = String(value ?? '').replace(/\D/g, '');
+      if (digits.length === 11) {
+        return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+      }
+      if (digits.length === 14) {
+        return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+      }
+      return value ?? '';
+    };
+
+    const formatCurrencyBR = (value) => {
+      const n = Number(value);
+      if (Number.isNaN(n)) return value ?? '';
+      return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+
+    const formatValue = (key, value) => {
+      if (value === null || value === undefined || value === '') return '—';
+      if (key === 'vlr_pix') return formatCurrencyBR(value);
+      if (key === 'dth_envio') {
+        const dt = parseIsoDateTime(value);
+        return dt ? formatDateTimeBR(dt) : value;
+      }
+      if (key === 'num_cnpj_cpf') return formatCpfCnpj(value);
+      return String(value);
+    };
+
+    const getStatusClass = (situacao) => {
+      const s = String(situacao || '').toLowerCase();
+      if (s.includes('aguard')) return 'bg-amber-50 text-amber-700 border-amber-200';
+      if (s.includes('enviad') || s.includes('conclu') || s.includes('pago')) return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      if (s.includes('erro') || s.includes('cancel')) return 'bg-rose-50 text-rose-700 border-rose-200';
+      return 'bg-slate-100 text-slate-700 border-slate-200';
+    };
+
+    function createDetailCard(label, value, extraClass = '') {
+      const card = document.createElement('div');
+      card.className = `rounded-2xl border border-slate-200 bg-white p-4 shadow-sm ${extraClass}`;
+
+      const labelEl = document.createElement('p');
+      labelEl.className = 'text-[11px] uppercase tracking-wide text-slate-400 font-semibold mb-1';
+      labelEl.textContent = label;
+
+      const valueEl = document.createElement('p');
+      valueEl.className = 'text-sm font-semibold text-slate-800 break-words';
+      valueEl.textContent = value;
+
+      card.appendChild(labelEl);
+      card.appendChild(valueEl);
+      return card;
+    }
+
+    function openDetailsModal(rowIndex) {
+      const row = filteredData[rowIndex];
+      if (!row) return;
+
+      const modal = document.getElementById('detailsModal');
+      const title = document.getElementById('detailsModalTitle');
+      const subtitle = document.getElementById('detailsModalSubtitle');
+      const highlights = document.getElementById('detailsHighlights');
+      const content = document.getElementById('detailsContent');
+
+      title.textContent = row.nom_fantasia || 'Registro selecionado';
+      subtitle.textContent = `${row.nom_unid_oper || ''}${row.id_transacao_origem ? ' • TxID ' + row.id_transacao_origem : ''}`;
+
+      highlights.innerHTML = '';
+      highlights.appendChild(createDetailCard('Valor', formatValue('vlr_pix', row.vlr_pix), 'border-orange-200'));
+      highlights.appendChild(createDetailCard('Situação', formatValue('situacao', row.situacao), getStatusClass(row.situacao)));
+      highlights.appendChild(createDetailCard('Envio', formatValue('dth_envio', row.dth_envio)));
+
+      content.innerHTML = '';
+      Object.entries(row).forEach(([key, value]) => {
+        content.appendChild(createDetailCard(fieldLabels[key] || key, formatValue(key, value)));
+      });
+
+      modal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDetailsModal();
+    });
+
+    /* ===== TABLE ===== */
+    function createHeader() {
+      const tr = document.getElementById('table-head');
+      tr.innerHTML = '';
+      let left = 0;
+
+      columns.forEach(col => {
+        const th = document.createElement('th');
+        let cls = 'px-3 py-2 whitespace-nowrap';
+        if (!col.action) cls += ' cursor-pointer';
+        if (col.action) cls += ' text-center';
+        if (col.key.startsWith('qtd_')) cls += ' text-center';
+
+        if (col.sticky) {
+          cls += ' sticky bg-slate-200 z-50';
+          th.style.left = left + 'px';
+          th.style.width = col.width + 'px';
+          left += col.width;
+        }
+
+        th.className = cls;
+        th.textContent = col.label;
+        if (!col.action) th.onclick = () => sortBy(col.key);
+        tr.appendChild(th);
+      });
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+
+      getPagedData().forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.className = `${i % 2 ? 'bg-slate-50' : 'bg-white'} hover:bg-slate-100 fade-in`;
+        let left = 0;
+
+        columns.forEach(col => {
+          const td = document.createElement('td');
+          let cls = 'px-3 py-2 whitespace-nowrap';
+
+          if (col.key.startsWith('qtd_')) cls += ' text-center font-medium';
+
+          if (col.sticky) {
+            cls += ' sticky z-40 ' + (i % 2 ? 'bg-slate-50' : 'bg-white');
+            td.style.left = left + 'px';
+            td.style.width = col.width + 'px';
+            left += col.width;
+          }
+
+          td.className = cls;
+          if (col.action) {
+            const rowIndex = filteredData.indexOf(row);
+            td.classList.add('text-center');
+            td.innerHTML = `
+              <button type="button" onclick="openDetailsModal(${rowIndex})"
+                title="Ver mais"
+                class="group inline-flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-orange-50 hover:text-vertis-orange hover:border-orange-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>`;
+          } else if (col.key === 'dth_ult_atualizacao') {
+            const dt = parseIsoDateTime(row[col.key]);
+            td.innerHTML = `<div class="flex items-center justify-center">
+            ${renderFreshIcon(dt, 30)}
+            </div>`;
+            td.classList.add('text-center');
+          } else {
+            td.textContent = formatValue(col.key, row[col.key]);
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      renderFooter();
+      updateKPIs();
+      renderPagination();
+    }
+
+    function renderFooter() {
+      const tr = document.getElementById('table-footer');
+      tr.innerHTML = '';
+      let left = 0;
+
+      columns.forEach((col, i) => {
+        const td = document.createElement('td');
+        let cls = 'px-3 py-2';
+        if (col.key.startsWith('qtd_')) cls += ' text-center';
+
+        if (col.sticky) {
+          cls += ' sticky bg-slate-100 z-40';
+          td.style.left = left + 'px';
+          td.style.width = col.width + 'px';
+          left += col.width;
+        }
+
+        td.className = cls;
+        if (col.action) {
+          td.textContent = '';
+        } else {
+          const total = filteredData.reduce((t, r) => t + Number(r[col.key] || 0), 0);
+          td.textContent = i === 0
+            ? 'Totais'
+            : col.sum
+              ? formatCurrencyBR(total)
+              : '';
+        }
+        tr.appendChild(td);
+      });
+    }
+
+    function renderPagination() {
+      const total = totalPages();
+      const delta = 1; // quantas páginas antes/depois da atual
+      const pages = [];
+      const range = [];
+
+      pageInfo.textContent =
+        `Página ${currentPage} de ${total} • ${filteredData.length} registros`;
+
+      // Sempre inclui primeira e última
+      range.push(1);
+      if (total > 1) range.push(total);
+
+      // Páginas ao redor da atual
+      for (let i = currentPage - delta; i <= currentPage + delta; i++) {
+        if (i > 1 && i < total) range.push(i);
+      }
+
+      // Ordena e remove duplicados
+      [...new Set(range)].sort((a, b) => a - b).forEach(p => pages.push(p));
+
+      pagination.innerHTML = '';
+
+      let last = 0;
+      pages.forEach(p => {
+        if (p - last > 1) {
+          const dots = document.createElement('span');
+          dots.textContent = '…';
+          dots.className = 'px-2 text-slate-400';
+          pagination.appendChild(dots);
+        }
+
+        const btn = document.createElement('button');
+        btn.textContent = p;
+        btn.className =
+          `px-2 py-1 rounded ${p === currentPage
+            ? 'bg-slate-700 text-white'
+            : 'bg-slate-200 hover:bg-slate-300'
+          }`;
+
+        btn.onclick = () => {
+          currentPage = p;
+          renderTable();
+        };
+
+        pagination.appendChild(btn);
+        last = p;
+      });
+    }
+
+
+    function sortBy(key) {
+      sortAsc = sortKey === key ? !sortAsc : true;
+      sortKey = key;
+      currentPage = 1;
+
+      filteredData.sort((a, b) => {
+        const n1 = Number(a[key]), n2 = Number(b[key]);
+        if (!isNaN(n1) && !isNaN(n2)) return sortAsc ? n1 - n2 : n2 - n1;
+        return sortAsc
+          ? String(a[key]).localeCompare(String(b[key]))
+          : String(b[key]).localeCompare(String(a[key]));
+      });
+
+      renderTable();
+    }
+
+    function applyFilter() {
+      const v = filterInput.value.toLowerCase();
+      filteredData = originalData.filter(r =>
+        String(r.cod_unid_negoc).includes(v) ||
+        String(r.cod_unid_oper).includes(v) ||
+        String(r.nom_unid_oper).toLowerCase().includes(v)
+      );
+      currentPage = 1;
+      renderTable();
+    }
+
+    async function loadData() {
+      refreshIndicator.classList.remove('opacity-0');
+      const r = await fetch(endpoint);
+      originalData = await r.json();
+      filteredData = [...originalData];
+      createHeader();
+      renderTable();
+      setTimeout(() => refreshIndicator.classList.add('opacity-0'), 800);
+    }
+
+    loadData();
+    setInterval(loadData, 300000);
+  </script>
+
+  <!-- MENU -->
+  <script>
+    (function () {
+      const btn = document.getElementById('menuBtn');
+      const panel = document.getElementById('menuPanel');
+
+      if (!btn || !panel) return;
+
+      const openMenu = () => {
+        panel.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+      };
+
+      const closeMenu = () => {
+        panel.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      };
+
+      const toggleMenu = () => {
+        const isOpen = !panel.classList.contains('hidden');
+        isOpen ? closeMenu() : openMenu();
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+      });
+
+      // Fecha clicando fora
+      document.addEventListener('click', (e) => {
+        if (!panel.contains(e.target) && e.target !== btn) closeMenu();
+      });
+
+      // Fecha no ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+
+      // Accordion
+      const getPanel = (key) => panel.querySelector(`[data-acc-panel="${key}"]`);
+      const getBtn = (key) => panel.querySelector(`[data-acc-btn="${key}"]`);
+
+      panel.querySelectorAll('[data-acc-btn]').forEach((accBtn) => {
+        accBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+
+          const key = accBtn.getAttribute('data-acc-btn');
+          const accPanel = getPanel(key);
+          if (!accPanel) return;
+
+          // Toggle do próprio painel
+          accPanel.classList.toggle('hidden');
+
+          // (Opcional) se fechar DFe, fecha filhos também
+          if (key === 'dfe' && accPanel.classList.contains('hidden')) {
+            const nfePanel = getPanel('nfe');
+            const nfsePanel = getPanel('nfse');
+            if (nfePanel) nfePanel.classList.add('hidden');
+            if (nfsePanel) nfsePanel.classList.add('hidden');
+          }
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+
+</html>

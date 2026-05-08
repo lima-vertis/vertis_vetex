@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/geral",
+            "destination": "http://177.11.209.38/vertis/VertisConnect.dll/api/V1.1/dados_gerais/118/1"
+        },
+        {
+            "source": "/api/pix",
+            "destination": "http://constellation.newvertis.com.br/vertis/VertisConnect.dll/api/V1.1/get_controle_pix/118"
+        }
+    ]
+}
