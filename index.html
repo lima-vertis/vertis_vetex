@@ -83,10 +83,57 @@
       opacity: 1;
       transform: scale(1.1);
     }
+
+
+    .modern-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, .95);
+      background: rgba(255, 255, 255, .88);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+      backdrop-filter: blur(14px);
+    }
+
+    .modern-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at top right, rgba(249, 115, 22, .10), transparent 32%);
+    }
+
+    .metric-tile {
+      border: 1px solid rgba(226, 232, 240, .95);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .05);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .metric-tile:hover {
+      transform: translateY(-2px);
+      border-color: rgba(249, 115, 22, .28);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, .08);
+    }
+
+    .chart-card {
+      border: 1px solid rgba(226, 232, 240, .95);
+      background: rgba(255, 255, 255, .90);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+      backdrop-filter: blur(14px);
+    }
+
+    .quality-legend-dot {
+      display: inline-flex;
+      width: .55rem;
+      height: .55rem;
+      border-radius: 9999px;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, .95);
+    }
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex flex-col">
+<body
+  class="bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.12),_transparent_28%),linear-gradient(135deg,_#f8fafc_0%,_#e2e8f0_100%)] min-h-screen flex flex-col">
 
   <!-- HEADER -->
   <header class="sticky top-0 z-50 backdrop-blur bg-gradient-to-r from-vertis-dark via-slate-900 to-slate-950/95 
@@ -151,122 +198,150 @@
     </div>
   </header>
 
-  <main class="p-6 flex-1 space-y-6">
+  <main class="p-4 md:p-6 flex-1 space-y-6">
 
-    <!-- ✅ PRIMEIRA LINHA: 2 WIDGETS (mais baixos) -->
-    <section class="grid grid-cols-1 xl:grid-cols-12 gap-4">
-      <!-- ✅ CLIENTE + VERSÃO (mais estreito) -->
-      <div class="bg-white rounded-2xl shadow p-4 xl:col-span-4 flex flex-col justify-center">
-        <div class="flex items-center justify-between gap-3">
+    <!-- ✅ PRIMEIRA LINHA: CLIENTE + TAREFAS -->
+    <section class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+      <!-- CLIENTE + VERSÃO -->
+      <div class="modern-card rounded-3xl p-5 xl:col-span-4 flex flex-col justify-between min-h-[188px]">
+        <div class="relative z-10 flex items-start justify-between gap-4">
           <div>
-            <h2 class="text-sm font-semibold text-slate-600">Cliente</h2>
-
-            <p id="dg_cliente" class="mt-1 text-2xl md:text-4xl font-bold text-slate-800">
-              —
-            </p>
-
-            <!-- Versão (linha única, fonte maior) -->
-            <div class="mt-1 text-sm md:text-base text-slate-500">
-              Versão
-              <span id="dg_versao" class="ml-1 font-mono font-semibold text-slate-700">
-                —
-              </span>
+            <div
+              class="inline-flex items-center gap-2 rounded-full bg-orange-50 border border-orange-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-orange-700">
+              Visão Geral
             </div>
+            <h2 class="mt-4 text-sm font-semibold text-slate-500">Cliente monitorado</h2>
+            <p id="dg_cliente" class="mt-1 text-3xl md:text-4xl font-black tracking-tight text-slate-900">—</p>
+            <p id="dg_cliente_sub" class="mt-1 text-xs text-slate-500">Unid. Oper.: —</p>
           </div>
 
-          <div class="flex flex-col items-end gap-2">
-            <span id="dg_status"
-              class="text-[10px] px-2 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold uppercase tracking-wide">
-              —
-            </span>
+          <span id="dg_status"
+            class="shrink-0 text-[10px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-bold uppercase tracking-wide">—</span>
+        </div>
+
+        <div class="relative z-10 mt-5 rounded-2xl bg-slate-950 text-white p-4 border border-white/10 shadow-lg">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400 font-semibold">Versão Vertis</p>
+              <p id="dg_versao" class="mt-1 font-mono text-xl font-bold text-white">—</p>
+            </div>
+            <div
+              class="h-11 w-11 rounded-2xl bg-orange-500/15 text-orange-300 flex items-center justify-center border border-orange-400/20">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
 
-
-      <!-- ✅ TAREFAS (Internet + Email na MESMA LINHA) -->
-      <div class="bg-white rounded-2xl shadow p-4 xl:col-span-8">
-        <div class="flex items-start justify-between gap-3">
+      <!-- TAREFAS -->
+      <div class="modern-card rounded-3xl p-5 xl:col-span-8">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-start md:justify-between gap-3">
           <div>
-            <h2 class="text-sm font-semibold text-slate-600">Tarefas</h2>
-            <p class="text-[11px] text-slate-500 mt-1">Internet (LOL) • Email (LOE)</p>
+            <div
+              class="inline-flex items-center gap-2 rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-600">
+              Operação
+            </div>
+            <h2 class="mt-3 text-xl font-black tracking-tight text-slate-900">Tarefas de publicação</h2>
+            <p class="text-xs text-slate-500 mt-1">Acompanhamento de Internet (LOL) e Email (LOE) em tempo real.</p>
           </div>
 
           <span
-            class="text-[10px] px-2 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold uppercase tracking-wide">tarefa</span>
+            class="text-[10px] px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 font-bold uppercase tracking-wide shadow-sm">Auto-refresh
+            5 min</span>
         </div>
 
-        <!-- cards lado a lado -->
-        <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-
+        <div class="relative z-10 mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
           <!-- INTERNET -->
-          <div class="rounded-xl border bg-gradient-to-br from-slate-50 to-white p-3">
+          <div class="rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-white p-4 shadow-sm">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-sky-500"></span>
-                <div class="text-xs font-semibold text-slate-800">Internet</div>
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 rounded-2xl bg-sky-100 text-sky-700 items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="text-sm font-black text-slate-900">Internet</p>
+                  <p class="text-[11px] text-slate-500">LOL</p>
+                </div>
               </div>
               <span
-                class="text-[10px] px-2 py-0.5 rounded-full bg-white border text-slate-600 font-semibold uppercase tracking-wide">LOL</span>
+                class="text-[10px] px-2 py-0.5 rounded-full bg-white border border-sky-100 text-sky-700 font-bold uppercase tracking-wide">online</span>
             </div>
 
-            <div class="mt-3 grid grid-cols-4 gap-2">
-              <div class="rounded-lg bg-white border p-2">
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Total</div>
-                <div id="tar_lol_total" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_lol_total" class="text-xl font-black text-slate-900 leading-tight">—</div>
               </div>
-              <div class="rounded-lg bg-white border p-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Fila</div>
-                <div id="tar_lol_fila" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_lol_fila" class="text-xl font-black text-amber-600 leading-tight">—</div>
               </div>
-              <div class="rounded-lg bg-white border p-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Erro</div>
-                <div id="tar_lol_erro" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_lol_erro" class="text-xl font-black text-rose-600 leading-tight">—</div>
               </div>
-              <div class="rounded-lg bg-white border p-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Sucesso</div>
-                <div id="tar_lol_sucesso" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_lol_sucesso" class="text-xl font-black text-emerald-600 leading-tight">—</div>
               </div>
             </div>
           </div>
 
           <!-- EMAIL -->
-          <div class="rounded-xl border bg-gradient-to-br from-slate-50 to-white p-3">
+          <div
+            class="rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-white p-4 shadow-sm">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-violet-500"></span>
-                <div class="text-xs font-semibold text-slate-800">Email</div>
+              <div class="flex items-center gap-3">
+                <span
+                  class="inline-flex h-10 w-10 rounded-2xl bg-violet-100 text-violet-700 items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="text-sm font-black text-slate-900">Email</p>
+                  <p class="text-[11px] text-slate-500">LOE</p>
+                </div>
               </div>
               <span
-                class="text-[10px] px-2 py-0.5 rounded-full bg-white border text-slate-600 font-semibold uppercase tracking-wide">LOE</span>
+                class="text-[10px] px-2 py-0.5 rounded-full bg-white border border-violet-100 text-violet-700 font-bold uppercase tracking-wide">envio</span>
             </div>
 
-            <div class="mt-3 grid grid-cols-4 gap-2">
-              <div class="rounded-lg bg-white border p-2">
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Total</div>
-                <div id="tar_loe_total" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_loe_total" class="text-xl font-black text-slate-900 leading-tight">—</div>
               </div>
-              <div class="rounded-lg bg-white border p-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Fila</div>
-                <div id="tar_loe_fila" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_loe_fila" class="text-xl font-black text-amber-600 leading-tight">—</div>
               </div>
-              <div class="rounded-lg bg-white border p-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Erro</div>
-                <div id="tar_loe_erro" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_loe_erro" class="text-xl font-black text-rose-600 leading-tight">—</div>
               </div>
-              <div class="rounded-lg bg-white border p-2">
+              <div class="metric-tile rounded-2xl p-3">
                 <div class="text-[10px] text-slate-500">Sucesso</div>
-                <div id="tar_loe_sucesso" class="text-base font-bold text-slate-900 leading-tight">—</div>
+                <div id="tar_loe_sucesso" class="text-xl font-black text-emerald-600 leading-tight">—</div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>
 
     <!-- GRÁFICO: PUBLICAÇÃO POR HORA -->
-    <section class="bg-white rounded-2xl shadow p-4">
+    <section class="chart-card rounded-3xl p-5">
       <div class="flex items-start justify-between gap-3">
         <div>
           <h2 class="text-sm font-semibold text-slate-600">Publicação por hora</h2>
@@ -282,28 +357,52 @@
 
     <!-- PIZZAS: INTERNET x EMAIL -->
     <section class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-      <div class="bg-white rounded-2xl shadow p-4">
+      <div class="chart-card rounded-3xl p-5">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <h2 class="text-sm font-semibold text-slate-600">Publicação • Internet</h2>
-            <p class="text-xs text-slate-500 mt-1">Distribuição por intervalo</p>
+            <h2 class="text-sm font-bold text-slate-700">Publicação • Internet</h2>
+            <p class="text-xs text-slate-500 mt-1">Distribuição por qualidade do tempo de publicação</p>
           </div>
           <span
             class="text-[10px] px-2 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold uppercase tracking-wide">grafico_internet</span>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2 text-[11px] text-slate-600">
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#16a34a"></i>05
+            min. Excelente</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#84cc16"></i>10
+            min. Ótimo</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#facc15"></i>15
+            min. Bom</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#f97316"></i>30
+            min. Regular</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot"
+              style="background:#dc2626"></i>Acima 30 min. Ruim</span>
         </div>
         <div class="mt-4 chart-wrap-sm">
           <canvas id="chartInternet"></canvas>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow p-4">
+      <div class="chart-card rounded-3xl p-5">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <h2 class="text-sm font-semibold text-slate-600">Publicação • Email</h2>
-            <p class="text-xs text-slate-500 mt-1">Distribuição por intervalo</p>
+            <h2 class="text-sm font-bold text-slate-700">Publicação • Email</h2>
+            <p class="text-xs text-slate-500 mt-1">Distribuição por qualidade do tempo de publicação</p>
           </div>
           <span
             class="text-[10px] px-2 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold uppercase tracking-wide">grafico_email</span>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2 text-[11px] text-slate-600">
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#16a34a"></i>05
+            min. Excelente</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#84cc16"></i>10
+            min. Ótimo</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#facc15"></i>15
+            min. Bom</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot" style="background:#f97316"></i>30
+            min. Regular</span>
+          <span class="inline-flex items-center gap-1.5"><i class="quality-legend-dot"
+              style="background:#dc2626"></i>Acima 30 min. Ruim</span>
         </div>
         <div class="mt-4 chart-wrap-sm">
           <canvas id="chartEmail"></canvas>
@@ -607,10 +706,44 @@
     let chartInternetInstance = null;
     let chartEmailInstance = null;
 
+    const QUALITY_INTERVALS = [
+      { key: '05', label: '05 min. Excelente', color: '#16a34a' },
+      { key: '10', label: '10 min. Ótimo', color: '#84cc16' },
+      { key: '15', label: '15 min. Bom', color: '#facc15' },
+      { key: '30', label: '30 min. Regular', color: '#f97316' },
+      { key: 'ACIMA30', label: 'Acima 30 min. Ruim', color: '#dc2626' }
+    ];
+
+    function getIntervalQualityKey(intervalo) {
+      const raw = String(intervalo ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const compact = raw.replace(/\s+/g, ' ').trim();
+
+      if (compact.includes('acima') || compact.includes('>') || compact.includes('maior') || compact.includes('+30')) return 'ACIMA30';
+      if (compact.includes('05') || compact.includes('5 min') || compact === '5') return '05';
+      if (compact.includes('10')) return '10';
+      if (compact.includes('15')) return '15';
+      if (compact.includes('30')) return '30';
+      return null;
+    }
+
     function buildIntervaloSeries(rows) {
-      const labels = (rows || []).map(r => String(r?.intervalo ?? '—'));
-      const data = (rows || []).map(r => Number(r?.count || 0));
-      return { labels, data };
+      const totals = new Map(QUALITY_INTERVALS.map(item => [item.key, 0]));
+
+      for (const r of (rows || [])) {
+        const key = getIntervalQualityKey(r?.intervalo);
+        if (!key) continue;
+        totals.set(key, (totals.get(key) || 0) + Number(r?.count || 0));
+      }
+
+      const items = QUALITY_INTERVALS
+        .map(item => ({ ...item, value: totals.get(item.key) || 0 }))
+        .filter(item => item.value > 0);
+
+      return {
+        labels: items.map(item => item.label),
+        data: items.map(item => item.value),
+        colors: items.map(item => item.color)
+      };
     }
 
     function renderPieChart(canvasId, rows, existingChart) {
@@ -627,22 +760,44 @@
       if (existingChart) existingChart.destroy();
 
       return new Chart(el, {
-        type: 'pie',
-        data: { labels: s.labels, datasets: [{ data: s.data, borderWidth: 1 }] },
+        type: 'doughnut',
+        data: {
+          labels: s.labels,
+          datasets: [{
+            data: s.data,
+            backgroundColor: s.colors,
+            borderColor: '#ffffff',
+            borderWidth: 3,
+            hoverOffset: 8
+          }]
+        },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          cutout: '62%',
           plugins: {
-            legend: { position: 'bottom' },
+            legend: {
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                pointStyle: 'circle',
+                padding: 16,
+                color: '#475569',
+                font: { size: 11, weight: '600' }
+              }
+            },
             tooltip: {
               enabled: true,
+              backgroundColor: '#0f172a',
+              padding: 12,
+              titleFont: { weight: '700' },
               callbacks: {
                 label: (ctx) => {
                   const label = ctx.label ?? '';
                   const value = Number(ctx.raw || 0);
                   const total = ctx.dataset.data.reduce((a, b) => a + Number(b || 0), 0) || 1;
                   const pct = ((value / total) * 100).toFixed(1) + '%';
-                  return `${label}: ${value} (${pct})`;
+                  return ` ${label}: ${value} (${pct})`;
                 }
               }
             }
