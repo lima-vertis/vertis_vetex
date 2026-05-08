@@ -81,6 +81,13 @@
       }
     }
 
+
+    @media (max-width: 767px) {
+      #sectionLaudosHora {
+        display: none !important;
+      }
+    }
+
     @media (max-width: 480px) {
       .chart-wrap {
         height: 250px;
@@ -404,7 +411,7 @@
     </section>
 
     <!-- GRÁFICO: PUBLICAÇÃO POR HORA -->
-    <section class="chart-card rounded-3xl p-4 md:p-5">
+    <section id="sectionLaudosHora" class="hidden md:block chart-card rounded-3xl p-4 md:p-5">
       <div class="flex items-start justify-between gap-3">
         <div>
           <h2 class="text-sm font-semibold text-slate-600">Publicação por hora</h2>
@@ -622,6 +629,7 @@
     const CLIENTE_COD_UNID_OPER = 1;
 
     let latestUsersBD = [];
+    let latestLaudosHoraRows = [];
 
     function setDadosGeraisWidgets(payload) {
       const elCliente = document.getElementById('dg_cliente');
@@ -738,6 +746,19 @@
     }
 
     function renderLaudosHoraChart(rows) {
+      const section = document.getElementById('sectionLaudosHora');
+
+      if (isMobileViewport()) {
+        if (section) section.classList.add('hidden');
+        if (chartLaudosHoraInstance) {
+          chartLaudosHoraInstance.destroy();
+          chartLaudosHoraInstance = null;
+        }
+        return;
+      }
+
+      if (section) section.classList.remove('hidden');
+
       const el = document.getElementById('chartLaudosHora');
       if (!el) return;
 
@@ -1038,7 +1059,8 @@
         setDadosGeraisWidgets(payload);
         setTarefas(payload);
 
-        renderLaudosHoraChart(payload?.laudos_hora || []);
+        latestLaudosHoraRows = payload?.laudos_hora || [];
+        renderLaudosHoraChart(latestLaudosHoraRows);
         renderInternetEmailCharts(payload);
 
         setConexoesBD(payload);
@@ -1062,7 +1084,11 @@
     }
 
     window.addEventListener('resize', () => {
-      if (chartLaudosHoraInstance) chartLaudosHoraInstance.options.plugins.legend.position = chartLegendPosition();
+      renderLaudosHoraChart(latestLaudosHoraRows);
+      if (chartLaudosHoraInstance) {
+        chartLaudosHoraInstance.options.plugins.legend.position = chartLegendPosition();
+        chartLaudosHoraInstance.update();
+      }
     });
 
     bindModalEvents();
