@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIX | Controle</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -150,17 +151,137 @@
       border-radius: 999px;
       flex: 0 0 auto;
     }
+
+
+    /* Ajustes mobile */
+    html,
+    body {
+      max-width: 100%;
+    }
+
+    .app-header {
+      gap: .75rem;
+    }
+
+    .mobile-safe-text {
+      min-width: 0;
+    }
+
+    @media (max-width: 640px) {
+      .app-header {
+        padding: .75rem .875rem !important;
+        align-items: center;
+      }
+
+      #menuPanel {
+        position: fixed !important;
+        left: .75rem !important;
+        right: .75rem !important;
+        top: 3.75rem !important;
+        width: auto !important;
+        max-height: calc(100vh - 5rem);
+        overflow-y: auto;
+      }
+
+      .metric-card {
+        border-radius: 1.25rem !important;
+        padding: 1rem !important;
+      }
+
+      .metric-card p[id] {
+        font-size: 1.55rem !important;
+        line-height: 1.15 !important;
+        word-break: break-word;
+      }
+
+      .mini-chart {
+        width: 128px;
+        height: 128px;
+      }
+
+      .mini-chart::after {
+        inset: 24px;
+      }
+
+      .mobile-card {
+        border-radius: 1.35rem !important;
+        padding: 1rem !important;
+      }
+
+      .mobile-section-title {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+
+      .mobile-filter {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: .75rem !important;
+      }
+
+      .mobile-filter span {
+        align-self: flex-start;
+      }
+
+      .mobile-pagination {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: .75rem;
+      }
+
+      #pagination {
+        overflow-x: auto;
+        padding-bottom: .25rem;
+        justify-content: flex-start;
+      }
+
+      #detailsModal .relative.min-h-screen {
+        align-items: flex-end !important;
+        padding: .75rem !important;
+      }
+
+      #detailsModal .max-w-5xl {
+        border-radius: 1.35rem 1.35rem 0 0 !important;
+        max-height: 92vh;
+      }
+
+      #detailsModal .px-6 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+
+      #detailsModal .p-6 {
+        padding: 1rem !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .mini-chart {
+        width: 112px;
+        height: 112px;
+      }
+
+      .mini-chart::after {
+        inset: 21px;
+      }
+
+      .mini-chart-center span:first-child {
+        font-size: 1.25rem !important;
+      }
+    }
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex flex-col">
+<body
+  class="bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.12),_transparent_30%),linear-gradient(135deg,_#f8fafc_0%,_#e2e8f0_100%)] min-h-screen flex flex-col overflow-x-hidden">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-50 backdrop-blur bg-gradient-to-r from-vertis-dark via-slate-900 to-slate-950/95 
-    text-white px-6 py-4 flex justify-between items-center shadow-lg shadow-black/10 border-b border-white/10">
+  <header
+    class="app-header sticky top-0 z-50 backdrop-blur bg-gradient-to-r from-vertis-dark via-slate-900 to-slate-950/95 
+    text-white px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center shadow-lg shadow-black/10 border-b border-white/10">
 
     <!-- ESQUERDA -->
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 sm:gap-4 min-w-0 mobile-safe-text">
 
       <!-- MENU SANDUÍCHE -->
       <nav class="relative">
@@ -211,14 +332,14 @@
 
 
       <!-- TEXTO -->
-      <h1 class="text-lg font-semibold tracking-wide whitespace-nowrap">
+      <h1 class="text-base sm:text-lg font-semibold tracking-wide whitespace-nowrap truncate">
         Vertis <span class="text-vertis-orange">•</span> PIX
       </h1>
     </div>
 
     <!-- DIREITA -->
-    <div class="flex items-center gap-4">
-      <span id="refreshIndicator" class="text-xs text-slate-300 opacity-0 transition-opacity">
+    <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+      <span id="refreshIndicator" class="hidden sm:inline text-xs text-slate-300 opacity-0 transition-opacity">
         Atualizando...
       </span>
 
@@ -264,18 +385,18 @@
         </span>
       </a>
 
-      <img src="https://v1.laudosonline.com.br/assets/images/logo-primary-white.png" alt="Vertis" class="h-8" />
+      <img src="https://v1.laudosonline.com.br/assets/images/logo-primary-white.png" alt="Vertis" class="h-7 sm:h-8" />
     </div>
 
   </header>
 
-  <main class="p-6 flex-1 space-y-6">
+  <main class="p-3 sm:p-4 md:p-6 flex-1 space-y-4 sm:space-y-6">
 
     <!-- KPIs / WIDGETS PIX -->
     <section class="space-y-4">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div class="metric-card rounded-3xl p-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+        <div class="metric-card rounded-3xl p-4 sm:p-5">
           <div class="flex items-start justify-between gap-3">
             <div>
               <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Total</p>
@@ -293,7 +414,7 @@
           </div>
         </div>
 
-        <div class="metric-card rounded-3xl p-5">
+        <div class="metric-card rounded-3xl p-4 sm:p-5">
           <div class="flex items-start justify-between gap-3">
             <div>
               <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Valor total</p>
@@ -311,7 +432,7 @@
           </div>
         </div>
 
-        <div class="metric-card rounded-3xl p-5">
+        <div class="metric-card rounded-3xl p-4 sm:p-5">
           <div class="flex items-start justify-between gap-3">
             <div>
               <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Caixa</p>
@@ -329,7 +450,7 @@
           </div>
         </div>
 
-        <div class="metric-card rounded-3xl p-5">
+        <div class="metric-card rounded-3xl p-4 sm:p-5">
           <div class="flex items-start justify-between gap-3">
             <div>
               <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Faturamento</p>
@@ -348,8 +469,8 @@
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div class="bg-white rounded-3xl shadow-card border border-slate-200 p-5 overflow-hidden">
-          <div class="flex items-start justify-between gap-4 mb-5">
+        <div class="mobile-card bg-white rounded-3xl shadow-card border border-slate-200 p-4 sm:p-5 overflow-hidden">
+          <div class="mobile-section-title flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
             <div>
               <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Distribuição</p>
               <h2 class="text-lg font-black text-slate-900">Origem do PIX</h2>
@@ -358,19 +479,19 @@
               class="text-[11px] px-2.5 py-1 rounded-full bg-orange-50 text-vertis-orange font-bold border border-orange-100">Caixa
               x Faturamento</span>
           </div>
-          <div class="flex flex-col sm:flex-row items-center gap-6">
+          <div class="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
             <div id="chartOrigem" class="mini-chart">
               <div class="mini-chart-center">
                 <span id="chartOrigemTotal" class="text-2xl font-black text-slate-900">0</span>
                 <span class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">PIX</span>
               </div>
             </div>
-            <div id="legendOrigem" class="w-full space-y-2"></div>
+            <div id="legendOrigem" class="w-full space-y-2 max-h-56 sm:max-h-none overflow-y-auto pr-1"></div>
           </div>
         </div>
 
-        <div class="bg-white rounded-3xl shadow-card border border-slate-200 p-5 overflow-hidden">
-          <div class="flex items-start justify-between gap-4 mb-5">
+        <div class="mobile-card bg-white rounded-3xl shadow-card border border-slate-200 p-4 sm:p-5 overflow-hidden">
+          <div class="mobile-section-title flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
             <div>
               <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Clientes</p>
               <h2 class="text-lg font-black text-slate-900">PIX por unidade</h2>
@@ -379,14 +500,14 @@
               class="text-[11px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">0
               clientes</span>
           </div>
-          <div class="flex flex-col sm:flex-row items-center gap-6">
+          <div class="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
             <div id="chartUnidades" class="mini-chart">
               <div class="mini-chart-center">
                 <span id="chartUnidadesTotal" class="text-2xl font-black text-slate-900">0</span>
                 <span class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">PIX</span>
               </div>
             </div>
-            <div id="legendUnidades" class="w-full space-y-2 max-h-44 overflow-y-auto pr-1"></div>
+            <div id="legendUnidades" class="w-full space-y-2 max-h-56 sm:max-h-44 overflow-y-auto pr-1"></div>
           </div>
         </div>
       </div>
@@ -394,15 +515,16 @@
     </section>
 
     <!-- FILTRO -->
-    <div class="bg-white rounded-2xl shadow p-4 flex items-center gap-4">
+    <div
+      class="mobile-filter bg-white rounded-2xl shadow-card border border-slate-200 p-3 sm:p-4 flex items-center gap-4">
       <input id="filterInput" type="text" placeholder="🔍 Filtrar por código ou nome da unidade..."
         class="w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring" oninput="applyFilter()" />
       <span class="text-sm text-slate-500 whitespace-nowrap">Auto-refresh 5 min</span>
     </div>
 
     <!-- TABELA -->
-    <div class="bg-white rounded-2xl shadow overflow-x-auto max-h-[70vh]">
-      <table class="min-w-full text-sm border-collapse">
+    <div class="bg-white rounded-2xl shadow-card border border-slate-200 overflow-x-auto max-h-[64vh] sm:max-h-[70vh]">
+      <table class="min-w-[980px] text-xs sm:text-sm border-collapse">
         <thead class="bg-slate-200 sticky top-0 z-40">
           <tr id="table-head"></tr>
         </thead>
@@ -414,7 +536,7 @@
     </div>
 
     <!-- PAGINAÇÃO -->
-    <div class="flex items-center justify-between px-2 text-sm text-slate-600">
+    <div class="mobile-pagination flex items-center justify-between px-1 sm:px-2 text-xs sm:text-sm text-slate-600">
       <span id="pageInfo"></span>
       <div id="pagination" class="flex gap-1"></div>
     </div>
