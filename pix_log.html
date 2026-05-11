@@ -768,15 +768,17 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3);
 
-      kpi_top_erros.innerHTML = '';
+      const elTopErros = document.getElementById('kpi_top_erros');
+      if (elTopErros) {
+        elTopErros.innerHTML = '';
 
-      if (topErros.length === 0) {
-        kpi_top_erros.innerHTML = '<li class="text-sm text-slate-400">Nenhum erro encontrado.</li>';
-      }
+        if (topErros.length === 0) {
+          elTopErros.innerHTML = '<li class="text-sm text-slate-400">Nenhum erro encontrado.</li>';
+        }
 
-      topErros.forEach(([desc, qtd]) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
+        topErros.forEach(([desc, qtd]) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
           <div class="group flex justify-between gap-2 cursor-pointer relative ${filterInput.value === desc ? 'bg-slate-100 rounded px-1' : ''}">
             <span class="truncate max-w-[420px] text-slate-700 hover:text-slate-900 transition" title="Clique para filtrar">${desc}</span>
             <span class="font-semibold text-rose-600">${qtd}</span>
@@ -784,13 +786,14 @@
           </div>
         `;
 
-        li.onclick = () => {
-          filterInput.value = filterInput.value === desc ? '' : desc;
-          applyFilter();
-        };
+          li.onclick = () => {
+            filterInput.value = filterInput.value === desc ? '' : desc;
+            applyFilter();
+          };
 
-        kpi_top_erros.appendChild(li);
-      });
+          elTopErros.appendChild(li);
+        });
+      }
 
       /* === Top Unidades com erro === */
       const unidades = {};
@@ -810,15 +813,17 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3);
 
-      kpi_top_unidades.innerHTML = '';
+      const elTopUnidades = document.getElementById('kpi_top_unidades');
+      if (elTopUnidades) {
+        elTopUnidades.innerHTML = '';
 
-      if (topUnidades.length === 0) {
-        kpi_top_unidades.innerHTML = '<li class="text-sm text-slate-400">Nenhuma unidade com erro.</li>';
-      }
+        if (topUnidades.length === 0) {
+          elTopUnidades.innerHTML = '<li class="text-sm text-slate-400">Nenhuma unidade com erro.</li>';
+        }
 
-      topUnidades.forEach(([nome, qtd]) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
+        topUnidades.forEach(([nome, qtd]) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
           <div class="group flex justify-between gap-2 cursor-pointer relative ${filterInput.value === nome ? 'bg-slate-100 rounded px-1' : ''}">
             <span class="truncate max-w-[420px] text-slate-700">${nome}</span>
             <span class="font-semibold text-rose-600">${qtd}</span>
@@ -826,13 +831,14 @@
           </div>
         `;
 
-        li.onclick = () => {
-          filterInput.value = filterInput.value === nome ? '' : nome;
-          applyFilter();
-        };
+          li.onclick = () => {
+            filterInput.value = filterInput.value === nome ? '' : nome;
+            applyFilter();
+          };
 
-        kpi_top_unidades.appendChild(li);
-      });
+          elTopUnidades.appendChild(li);
+        });
+      }
 
       /* === Registros Hoje === */
       const hoje = new Date().toLocaleDateString('sv-SE');
@@ -998,7 +1004,11 @@
       const pages = [];
       const range = [];
 
-      pageInfo.textContent =
+      const pageInfoEl = document.getElementById('pageInfo');
+      const paginationEl = document.getElementById('pagination');
+      if (!pageInfoEl || !paginationEl) return;
+
+      pageInfoEl.textContent =
         `Página ${currentPage} de ${total} • ${filteredData.length} registros`;
 
       // Sempre inclui primeira e última
@@ -1013,7 +1023,7 @@
       // Ordena e remove duplicados
       [...new Set(range)].sort((a, b) => a - b).forEach(p => pages.push(p));
 
-      pagination.innerHTML = '';
+      paginationEl.innerHTML = '';
 
       let last = 0;
       pages.forEach(p => {
@@ -1021,7 +1031,7 @@
           const dots = document.createElement('span');
           dots.textContent = '…';
           dots.className = 'px-2 text-slate-400';
-          pagination.appendChild(dots);
+          paginationEl.appendChild(dots);
         }
 
         const btn = document.createElement('button');
@@ -1037,7 +1047,7 @@
           renderTable();
         };
 
-        pagination.appendChild(btn);
+        paginationEl.appendChild(btn);
         last = p;
       });
     }
