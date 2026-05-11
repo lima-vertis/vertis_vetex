@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PIX | Logs</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -85,17 +86,141 @@
       opacity: 1;
       transform: scale(1.1);
     }
+
+
+    /* Responsividade mobile */
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .app-header {
+      gap: .75rem;
+    }
+
+    .mobile-safe-text {
+      min-width: 0;
+    }
+
+    .log-table {
+      width: 100%;
+      min-width: 980px;
+      table-layout: auto;
+    }
+
+    @media (max-width: 640px) {
+      .app-header {
+        padding: .75rem .875rem !important;
+        align-items: center;
+      }
+
+      #menuPanel {
+        position: fixed !important;
+        left: .75rem !important;
+        right: .75rem !important;
+        top: 3.75rem !important;
+        width: auto !important;
+        max-height: calc(100vh - 5rem);
+        overflow-y: auto;
+      }
+
+      .mobile-main {
+        padding: .75rem !important;
+        gap: 1rem !important;
+      }
+
+      .mobile-kpi-card {
+        border-radius: 1.25rem !important;
+        padding: 1rem !important;
+      }
+
+      .mobile-kpi-card p[id] {
+        font-size: 1.55rem !important;
+        line-height: 1.15 !important;
+        word-break: break-word;
+      }
+
+      .mobile-filter {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: .75rem !important;
+        padding: .85rem !important;
+        border-radius: 1.25rem !important;
+      }
+
+      .mobile-filter button,
+      .mobile-filter span {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .mobile-table-wrap {
+        max-height: 62vh !important;
+        border-radius: 1.25rem !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .mobile-pagination {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: .75rem;
+      }
+
+      #pagination {
+        overflow-x: auto;
+        padding-bottom: .25rem;
+        justify-content: flex-start;
+      }
+
+      #detailsModal .relative.min-h-screen,
+      #modalTop10Erros .relative,
+      #modalTop10Unidades .relative {
+        margin-top: .75rem !important;
+      }
+
+      #detailsModal .relative.min-h-screen {
+        align-items: flex-end !important;
+        padding: .75rem !important;
+      }
+
+      #detailsModal .max-w-5xl {
+        border-radius: 1.35rem 1.35rem 0 0 !important;
+        max-height: 92vh;
+      }
+
+      #detailsModal .px-6 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+
+      #detailsModal .p-6 {
+        padding: 1rem !important;
+      }
+
+      #modalTop10Erros .relative,
+      #modalTop10Unidades .relative {
+        width: 94% !important;
+      }
+    }
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex flex-col overflow-x-hidden">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-50 backdrop-blur bg-gradient-to-r from-vertis-dark via-slate-900 to-slate-950/95 
-    text-white px-6 py-4 flex justify-between items-center shadow-lg shadow-black/10 border-b border-white/10">
+  <header
+    class="app-header sticky top-0 z-50 backdrop-blur bg-gradient-to-r from-vertis-dark via-slate-900 to-slate-950/95 
+    text-white px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center shadow-lg shadow-black/10 border-b border-white/10">
 
     <!-- ESQUERDA -->
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 sm:gap-4 min-w-0 mobile-safe-text">
 
       <!-- MENU SANDUÍCHE -->
       <nav class="relative">
@@ -214,14 +339,14 @@
 
 
       <!-- TEXTO -->
-      <h1 class="text-lg font-semibold tracking-wide whitespace-nowrap">
+      <h1 class="text-base sm:text-lg font-semibold tracking-wide whitespace-nowrap truncate">
         Vertis <span class="text-vertis-orange">•</span> PIX <span class="text-vertis-orange">•</span> Logs
       </h1>
     </div>
 
     <!-- DIREITA -->
-    <div class="flex items-center gap-4">
-      <span id="refreshIndicator" class="text-xs text-slate-300 opacity-0 transition-opacity">
+    <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+      <span id="refreshIndicator" class="hidden sm:inline text-xs text-slate-300 opacity-0 transition-opacity">
         Atualizando...
       </span>
 
@@ -267,19 +392,19 @@
         </span>
       </a>
 
-      <img src="https://v1.laudosonline.com.br/assets/images/logo-primary-white.png" alt="Vertis" class="h-8" />
+      <img src="https://v1.laudosonline.com.br/assets/images/logo-primary-white.png" alt="Vertis" class="h-7 sm:h-8" />
     </div>
 
   </header>
 
 
-  <main class="p-6 flex-1 space-y-6">
+  <main class="mobile-main p-3 sm:p-4 md:p-6 flex-1 space-y-4 sm:space-y-6">
 
     <!-- KPIs -->
-    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
 
       <!-- TOTAL REGISTROS -->
-      <div class="bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
+      <div class="mobile-kpi-card bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
         <div class="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-orange-100/70"></div>
         <div class="relative flex items-start justify-between gap-3">
           <div>
@@ -299,7 +424,7 @@
       </div>
 
       <!-- PERCENTUAL SUCESSO -->
-      <div class="bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
+      <div class="mobile-kpi-card bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
         <div class="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-emerald-100/70"></div>
         <div class="relative flex items-start justify-between gap-3">
           <div class="w-full">
@@ -319,7 +444,7 @@
       </div>
 
       <!-- PERCENTUAL ERRO -->
-      <div class="bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
+      <div class="mobile-kpi-card bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
         <div class="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-rose-100/70"></div>
         <div class="relative flex items-start justify-between gap-3">
           <div class="w-full">
@@ -339,7 +464,7 @@
       </div>
 
       <!-- REGISTROS HOJE -->
-      <div class="bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
+      <div class="mobile-kpi-card bg-white rounded-2xl shadow p-4 border border-slate-100 relative overflow-hidden">
         <div class="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-indigo-100/70"></div>
         <div class="relative flex items-start justify-between gap-3">
           <div>
@@ -361,7 +486,7 @@
     </section>
 
     <!-- FILTRO -->
-    <div class="bg-white rounded-2xl shadow p-4 flex items-center gap-3">
+    <div class="mobile-filter bg-white rounded-2xl shadow p-3 sm:p-4 flex items-center gap-3">
       <input id="filterInput" type="text" placeholder="🔍 Filtrar por código, unidade ou erro..."
         class="w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring" oninput="applyFilter()" />
 
@@ -375,8 +500,8 @@
 
 
     <!-- TABELA -->
-    <div class="bg-white rounded-2xl shadow overflow-x-auto max-h-[70vh]">
-      <table class="min-w-full text-sm border-collapse">
+    <div class="mobile-table-wrap bg-white rounded-2xl shadow overflow-x-auto max-h-[64vh] sm:max-h-[70vh]">
+      <table class="log-table text-xs sm:text-sm border-collapse">
         <thead class="bg-slate-200 sticky top-0 z-40">
           <tr id="table-head"></tr>
         </thead>
@@ -388,7 +513,7 @@
     </div>
 
     <!-- PAGINAÇÃO -->
-    <div class="flex items-center justify-between px-2 text-sm text-slate-600">
+    <div class="mobile-pagination flex items-center justify-between px-1 sm:px-2 text-xs sm:text-sm text-slate-600">
       <span id="pageInfo"></span>
       <div id="pagination" class="flex gap-1"></div>
     </div>
@@ -436,14 +561,14 @@
     let currentPage = 1;
 
     const columns = [
-      { key: 'id', label: 'ID', width: 20 },
-      { key: 'id_pix', label: 'ID Pix', width: 25 },
-      { key: 'pix_endtoendid', label: 'EndToEndID', width: 80 },
-      { key: 'pix_txid', label: 'TxID' },
-      { key: 'pix_valor', label: 'Valor R$', sum: true },
-      { key: 'pix_horario', label: 'Horário' },
-      { key: 'ind_erro', label: 'Status' },
-      { key: '__actions', label: '', action: true, width: 70 }
+      { key: 'id', label: 'ID', width: 20, center: true },
+      { key: 'id_pix', label: 'ID Pix', width: 25, center: true },
+      { key: 'pix_endtoendid', label: 'EndToEndID', width: 80, center: true },
+      { key: 'pix_txid', label: 'TxID', center: true },
+      { key: 'pix_valor', label: 'Valor R$', sum: true, center: true },
+      { key: 'pix_horario', label: 'Horário', center: true },
+      { key: 'ind_erro', label: 'Status', center: true },
+      { key: '__actions', label: '', action: true, width: 70, center: true }
     ];
 
     let originalData = [], filteredData = [], sortKey = null, sortAsc = true;
@@ -732,6 +857,7 @@
       columns.forEach(col => {
         const th = document.createElement('th');
         let cls = 'px-3 py-2 whitespace-nowrap';
+        if (col.center) cls += ' text-center';
         if (!col.action) cls += ' cursor-pointer';
         if (col.action) cls += ' text-center';
         if (col.key.startsWith('qtd_')) cls += ' text-center';
@@ -740,7 +866,11 @@
           cls += ' sticky bg-slate-200 z-50';
           th.style.left = left + 'px';
           th.style.width = col.width + 'px';
+          th.style.minWidth = col.width + 'px';
           left += col.width;
+        } else if (col.action) {
+          th.style.width = (col.width || 70) + 'px';
+          th.style.minWidth = (col.width || 70) + 'px';
         }
 
         th.className = cls;
@@ -762,6 +892,7 @@
         columns.forEach(col => {
           const td = document.createElement('td');
           let cls = 'px-3 py-2 whitespace-nowrap';
+          if (col.center) cls += ' text-center';
 
           if (col.key.startsWith('qtd_')) cls += ' text-center font-medium';
 
@@ -771,7 +902,11 @@
             cls += ' sticky z-40 ' + (i % 2 ? 'bg-slate-50' : 'bg-white');
             td.style.left = left + 'px';
             td.style.width = col.width + 'px';
+            td.style.minWidth = col.width + 'px';
             left += col.width;
+          } else if (col.action) {
+            td.style.width = (col.width || 70) + 'px';
+            td.style.minWidth = (col.width || 70) + 'px';
           }
 
           td.className = cls;
@@ -812,6 +947,7 @@
       columns.forEach((col, i) => {
         const td = document.createElement('td');
         let cls = 'px-3 py-2';
+        if (col.center) cls += ' text-center';
 
         if (col.key.startsWith('qtd_')) cls += ' text-center';
 
