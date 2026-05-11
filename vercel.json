@@ -9,7 +9,7 @@
             "destination": "http://constellation.newvertis.com.br/vertis/VertisConnect.dll/api/V1.1/get_controle_pix/118"
         },
         {
-            "source": "/api/pix/logs",
+            "source": "/api/pix_log",
             "destination": "http://constellation.newvertis.com.br/vertis/VertisConnect.dll/api/V1.1/get_controle_pix_log/118"
         }
     ]
