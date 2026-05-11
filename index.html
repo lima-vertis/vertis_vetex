@@ -776,10 +776,10 @@
         data: {
           labels: s.labels,
           datasets: [
-            { type: 'bar', label: 'Laudos Assinados', data: s.assinados, borderWidth: 1 },
-            { type: 'bar', label: 'Tarefas | Laudos', data: s.tarefas, borderWidth: 1 },
-            { type: 'line', label: 'Laudos | Internet', data: s.internet, tension: 0.25, pointRadius: 2, borderWidth: 2 },
-            { type: 'line', label: 'Laudos | Email', data: s.email, tension: 0.25, pointRadius: 2, borderWidth: 2 }
+            { type: 'bar', label: 'Laudos Assinados', data: s.assinados, borderWidth: 1, backgroundColor: '#0080C0', borderColor: '#0080C0' },
+            { type: 'bar', label: 'Tarefas | Laudos', data: s.tarefas, borderWidth: 1, backgroundColor: '#9C9C9C', borderColor: '#9C9C9C' },
+            { type: 'line', label: 'Laudos | Internet', data: s.internet, tension: 0.25, pointRadius: 2, borderWidth: 2, backgroundColor: '#00FF40', borderColor: '#00FF40' },
+            { type: 'line', label: 'Laudos | Email', data: s.email, tension: 0.25, pointRadius: 2, borderWidth: 2, backgroundColor: '#FF8000', borderColor: '#FF8000' }
           ]
         },
         options: {
