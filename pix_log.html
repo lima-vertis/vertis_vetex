@@ -161,6 +161,11 @@
         justify-content: center;
       }
 
+
+      #statusFilters button {
+        width: auto !important;
+      }
+
       .mobile-table-wrap {
         max-height: 62vh !important;
         border-radius: 1.25rem !important;
@@ -428,6 +433,23 @@
       </button>
 
       <span class="text-sm text-slate-500 whitespace-nowrap">Auto-refresh 5 min</span>
+
+      <div class="w-full flex flex-wrap gap-2 pt-1" id="statusFilters">
+        <button type="button" onclick="setStatusFilter('', this)"
+          class="status-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-slate-900 text-white border-slate-900 ring-2 ring-offset-1 ring-slate-400">
+          Todos
+        </button>
+
+        <button type="button" onclick="setStatusFilter('N', this)"
+          class="status-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100">
+          Sucesso
+        </button>
+
+        <button type="button" onclick="setStatusFilter('S', this)"
+          class="status-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100">
+          Erro
+        </button>
+      </div>
     </div>
 
 
@@ -632,9 +654,33 @@
     });
 
 
+    let currentStatusFilter = '';
+
+    function setStatusFilter(value, button) {
+      currentStatusFilter = value;
+
+      document.querySelectorAll('.status-chip').forEach(btn => {
+        btn.classList.remove('ring-2', 'ring-offset-1', 'ring-slate-400');
+      });
+
+      if (button) {
+        button.classList.add('ring-2', 'ring-offset-1', 'ring-slate-400');
+      }
+
+      applyFilter();
+    }
+
     /* ===== Função Limpa Filtros ===== */
     function clearFilters() {
       filterInput.value = '';
+      currentStatusFilter = '';
+
+      const firstChip = document.querySelector('.status-chip');
+      document.querySelectorAll('.status-chip').forEach(btn => {
+        btn.classList.remove('ring-2', 'ring-offset-1', 'ring-slate-400');
+      });
+      if (firstChip) firstChip.classList.add('ring-2', 'ring-offset-1', 'ring-slate-400');
+
       filteredData = [...originalData];
       currentPage = 1;
       renderTable();
@@ -1003,15 +1049,28 @@
 
     function applyFilter() {
       const v = filterInput.value.toLowerCase();
-      filteredData = originalData.filter(r =>
-        String(r.cod_unid_negoc).includes(v) ||
-        String(r.cod_unid_oper).includes(v) ||
-        String(r.nom_unid_oper).toLowerCase().includes(v) ||
-        String(r.desc_log).toLowerCase().includes(v)
-      );
+
+      filteredData = originalData.filter(r => {
+        const matchText =
+          String(r.cod_unid_negoc || '').toLowerCase().includes(v) ||
+          String(r.cod_unid_oper || '').toLowerCase().includes(v) ||
+          String(r.nom_unid_oper || '').toLowerCase().includes(v) ||
+          String(r.desc_log || '').toLowerCase().includes(v) ||
+          String(r.pix_txid || '').toLowerCase().includes(v) ||
+          String(r.pix_endtoendid || '').toLowerCase().includes(v);
+
+        const matchStatus =
+          !currentStatusFilter ||
+          String(r.ind_erro || '').toUpperCase() === currentStatusFilter;
+
+        return matchText && matchStatus;
+      });
+
       currentPage = 1;
       renderTable();
-      btnClearFilter.disabled = !filterInput.value;
+
+      const hasFilter = Boolean(filterInput.value || currentStatusFilter);
+      btnClearFilter.disabled = !hasFilter;
       btnClearFilter.classList.toggle('opacity-50', btnClearFilter.disabled);
       btnClearFilter.classList.toggle('cursor-not-allowed', btnClearFilter.disabled);
 

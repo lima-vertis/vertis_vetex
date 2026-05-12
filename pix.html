@@ -543,11 +543,39 @@
     </section>
 
     <!-- FILTRO -->
-    <div
-      class="mobile-filter bg-white rounded-2xl shadow-card border border-slate-200 p-3 sm:p-4 flex items-center gap-4">
-      <input id="filterInput" type="text" placeholder="🔍 Filtrar por código ou nome da unidade..."
-        class="w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring" oninput="applyFilter()" />
-      <span class="text-sm text-slate-500 whitespace-nowrap">Auto-refresh 5 min</span>
+    <div class="bg-white rounded-2xl shadow-card border border-slate-200 p-3 sm:p-4 space-y-3">
+      <div class="mobile-filter flex items-center gap-4">
+        <input id="filterInput" type="text" placeholder="🔍 Filtrar por código, nome da unidade ou situação..."
+          class="w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring" oninput="applyFilter()" />
+        <span class="text-sm text-slate-500 whitespace-nowrap">Auto-refresh 5 min</span>
+      </div>
+
+      <div class="flex flex-wrap gap-2" id="situacaoFilters" aria-label="Filtro por situação">
+        <button type="button" data-situacao="" onclick="setSituacaoFilter('', this)"
+          class="situacao-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-slate-900 text-white border-slate-900 ring-2 ring-offset-1 ring-slate-400">
+          Todos
+        </button>
+
+        <button type="button" data-situacao="Aguardando envio" onclick="setSituacaoFilter('Aguardando envio', this)"
+          class="situacao-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100">
+          Aguardando envio
+        </button>
+
+        <button type="button" data-situacao="Enviado ao cliente" onclick="setSituacaoFilter('Enviado ao cliente', this)"
+          class="situacao-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
+          Enviado ao cliente
+        </button>
+
+        <button type="button" data-situacao="Liquidado" onclick="setSituacaoFilter('Liquidado', this)"
+          class="situacao-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100">
+          Liquidado
+        </button>
+
+        <button type="button" data-situacao="Cancelado" onclick="setSituacaoFilter('Cancelado', this)"
+          class="situacao-chip px-3 py-1.5 rounded-full text-xs font-bold border transition bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
+          Cancelado
+        </button>
+      </div>
     </div>
 
     <!-- TABELA -->
@@ -1150,13 +1178,42 @@
       renderTable();
     }
 
+    let currentSituacaoFilter = '';
+
+    function setSituacaoFilter(value, button) {
+      currentSituacaoFilter = value;
+
+      document.querySelectorAll('.situacao-chip').forEach(btn => {
+        btn.classList.remove('ring-2', 'ring-offset-1', 'ring-slate-400');
+      });
+
+      if (button) {
+        button.classList.add('ring-2', 'ring-offset-1', 'ring-slate-400');
+      }
+
+      currentPage = 1;
+      applyFilter();
+    }
+
     function applyFilter() {
-      const v = filterInput.value.toLowerCase();
-      filteredData = originalData.filter(r =>
-        String(r.cod_unid_negoc).includes(v) ||
-        String(r.cod_unid_oper).includes(v) ||
-        String(r.nom_unid_oper).toLowerCase().includes(v)
-      );
+      const v = normalizeText(filterInput.value);
+
+      filteredData = originalData.filter(r => {
+        const matchText =
+          normalizeText(r.cod_unid_negoc).includes(v) ||
+          normalizeText(r.cod_unid_oper).includes(v) ||
+          normalizeText(r.nom_unid_oper).includes(v) ||
+          normalizeText(r.situacao).includes(v) ||
+          normalizeText(r.origem).includes(v) ||
+          normalizeText(r.nom_fantasia).includes(v);
+
+        const matchSituacao =
+          !currentSituacaoFilter ||
+          normalizeText(r.situacao) === normalizeText(currentSituacaoFilter);
+
+        return matchText && matchSituacao;
+      });
+
       currentPage = 1;
       renderTable();
     }
