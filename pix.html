@@ -634,9 +634,6 @@
 
   <script>
     const endpoint = "/api/pix";
-    //const endpoint = "http://localhost:9000/api/V1.1/get_controle_pix/118";
-    //const endpoint = "http://constellation.newvertis.com.br/vertis/VertisConnect.dll/api/V1.1/get_controle_pix/118";
-
     const PAGE_SIZE = 10;
     let currentPage = 1;
 
@@ -922,7 +919,7 @@
       if (value === null || value === undefined || value === '') return '—';
       if (key === 'vlr_pix') return formatCurrencyBR(value);
       if (key === 'dth_envio') {
-        const dt = parseIsoDateTime(value);
+        const dt = parseBrDateTime(value) || parseIsoDateTime(value);
         return dt ? formatDateTimeBR(dt) : value;
       }
       if (key === 'num_cnpj_cpf') return formatCpfCnpj(value);
