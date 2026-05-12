@@ -475,7 +475,28 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div class="mobile-card bg-white rounded-3xl shadow-card border border-slate-200 p-4 sm:p-5 overflow-hidden">
+          <div class="mobile-section-title flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
+            <div>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Clientes</p>
+              <h2 class="text-lg font-black text-slate-900">PIX por unidade</h2>
+            </div>
+            <span id="kpi_clientes_unicos"
+              class="text-[11px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">0
+              clientes</span>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
+            <div id="chartUnidades" class="mini-chart">
+              <div class="mini-chart-center">
+                <span id="chartUnidadesTotal" class="text-2xl font-black text-slate-900">0</span>
+                <span class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">PIX</span>
+              </div>
+            </div>
+            <div id="legendUnidades" class="w-full space-y-2 max-h-56 sm:max-h-44 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
         <div class="mobile-card bg-white rounded-3xl shadow-card border border-slate-200 p-4 sm:p-5 overflow-hidden">
           <div class="mobile-section-title flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
             <div>
@@ -500,21 +521,21 @@
         <div class="mobile-card bg-white rounded-3xl shadow-card border border-slate-200 p-4 sm:p-5 overflow-hidden">
           <div class="mobile-section-title flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
             <div>
-              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Clientes</p>
-              <h2 class="text-lg font-black text-slate-900">PIX por unidade</h2>
+              <p class="text-xs uppercase tracking-[0.18em] text-slate-400 font-bold">Situação</p>
+              <h2 class="text-lg font-black text-slate-900">PIX por situação</h2>
             </div>
-            <span id="kpi_clientes_unicos"
+            <span id="kpi_situacoes_unicas"
               class="text-[11px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">0
-              clientes</span>
+              situações</span>
           </div>
           <div class="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
-            <div id="chartUnidades" class="mini-chart">
+            <div id="chartSituacoes" class="mini-chart">
               <div class="mini-chart-center">
-                <span id="chartUnidadesTotal" class="text-2xl font-black text-slate-900">0</span>
+                <span id="chartSituacoesTotal" class="text-2xl font-black text-slate-900">0</span>
                 <span class="text-[10px] uppercase tracking-wide text-slate-400 font-bold">PIX</span>
               </div>
             </div>
-            <div id="legendUnidades" class="w-full space-y-2 max-h-56 sm:max-h-44 overflow-y-auto pr-1"></div>
+            <div id="legendSituacoes" class="w-full space-y-2 max-h-56 sm:max-h-44 overflow-y-auto pr-1"></div>
           </div>
         </div>
       </div>
@@ -702,6 +723,49 @@
     const normalizeText = (value) =>
       String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
 
+    const getSituacaoMeta = (situacao) => {
+      const normalized = normalizeText(situacao);
+
+      if (normalized.includes('aguardando')) {
+        return {
+          color: '#DC2626',
+          badgeClass: 'bg-rose-50 text-rose-700 border-rose-200'
+        };
+      }
+
+      if (normalized.includes('enviado')) {
+        return {
+          color: '#F97316',
+          badgeClass: 'bg-orange-50 text-orange-700 border-orange-200'
+        };
+      }
+
+      if (normalized.includes('liquidado')) {
+        return {
+          color: '#16A34A',
+          badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+        };
+      }
+
+      if (normalized.includes('cancelado')) {
+        return {
+          color: '#64748B',
+          badgeClass: 'bg-slate-100 text-slate-700 border-slate-200'
+        };
+      }
+
+      return {
+        color: '#94A3B8',
+        badgeClass: 'bg-slate-50 text-slate-600 border-slate-200'
+      };
+    };
+
+    const renderSituacaoBadge = (situacao) => {
+      const label = String(situacao || 'Não informado');
+      const meta = getSituacaoMeta(label);
+      return `<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full border text-xs font-bold ${meta.badgeClass}">${label}</span>`;
+    };
+
     const countBy = (data, key) => {
       return data.reduce((acc, row) => {
         const raw = row[key] || 'Não informado';
@@ -715,6 +779,11 @@
       Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, limit);
 
     const chartColors = ['#F97316', '#0F172A', '#38BDF8', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#64748B'];
+
+    function getChartColor(chartId, label, index) {
+      if (chartId === 'chartSituacoes') return getSituacaoMeta(label).color;
+      return chartColors[index % chartColors.length];
+    }
 
     function renderPieChart(chartId, legendId, entries, total) {
       const chart = document.getElementById(chartId);
@@ -730,7 +799,7 @@
       let start = 0;
       const gradient = entries.map(([label, value], index) => {
         const deg = (value / total) * 360;
-        const color = chartColors[index % chartColors.length];
+        const color = getChartColor(chartId, label, index);
         const part = `${color} ${start}deg ${start + deg}deg`;
         start += deg;
         return part;
@@ -740,7 +809,7 @@
 
       legend.innerHTML = entries.map(([label, value], index) => {
         const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-        const color = chartColors[index % chartColors.length];
+        const color = getChartColor(chartId, label, index);
         return `
           <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-3 py-2">
             <div class="flex items-center gap-2 min-w-0">
@@ -761,6 +830,7 @@
       const caixa = filteredData.filter(r => normalizeText(r.origem).includes('caixa')).length;
       const faturamento = filteredData.filter(r => normalizeText(r.origem).includes('faturamento')).length;
       const clientesUnicos = new Set(filteredData.map(r => r.nom_unid_oper || 'Não informado')).size;
+      const situacoesUnicas = new Set(filteredData.map(r => r.situacao || 'Não informado')).size;
 
       document.getElementById('kpi_total_pix').textContent = total;
       document.getElementById('kpi_valor_total').textContent = formatCurrencyBR(valorTotal);
@@ -769,15 +839,19 @@
       document.getElementById('kpi_origem_caixa_pct').textContent = `${pct(caixa, total)} do total`;
       document.getElementById('kpi_origem_faturamento_pct').textContent = `${pct(faturamento, total)} do total`;
       document.getElementById('kpi_clientes_unicos').textContent = `${clientesUnicos} cliente${clientesUnicos === 1 ? '' : 's'}`;
+      document.getElementById('kpi_situacoes_unicas').textContent = `${situacoesUnicas} situaç${situacoesUnicas === 1 ? 'ão' : 'ões'}`;
 
-      const origemEntries = topEntries(countBy(filteredData, 'origem'), 8);
       const unidadeEntries = topEntries(countBy(filteredData, 'nom_unid_oper'), 8);
+      const origemEntries = topEntries(countBy(filteredData, 'origem'), 8);
+      const situacaoEntries = topEntries(countBy(filteredData, 'situacao'), 8);
 
-      document.getElementById('chartOrigemTotal').textContent = total;
       document.getElementById('chartUnidadesTotal').textContent = total;
+      document.getElementById('chartOrigemTotal').textContent = total;
+      document.getElementById('chartSituacoesTotal').textContent = total;
 
-      renderPieChart('chartOrigem', 'legendOrigem', origemEntries, total);
       renderPieChart('chartUnidades', 'legendUnidades', unidadeEntries, total);
+      renderPieChart('chartOrigem', 'legendOrigem', origemEntries, total);
+      renderPieChart('chartSituacoes', 'legendSituacoes', situacaoEntries, total);
     }
 
 
@@ -827,13 +901,7 @@
       return String(value);
     };
 
-    const getStatusClass = (situacao) => {
-      const s = String(situacao || '').toLowerCase();
-      if (s.includes('aguard')) return 'bg-amber-50 text-amber-700 border-amber-200';
-      if (s.includes('enviad') || s.includes('conclu') || s.includes('pago')) return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      if (s.includes('erro') || s.includes('cancel')) return 'bg-rose-50 text-rose-700 border-rose-200';
-      return 'bg-slate-100 text-slate-700 border-slate-200';
-    };
+    const getStatusClass = (situacao) => getSituacaoMeta(situacao).badgeClass;
 
     function createDetailCard(label, value, extraClass = '') {
       const card = document.createElement('div');
@@ -964,6 +1032,8 @@
             ${renderFreshIcon(dt, 30)}
             </div>`;
             td.classList.add('text-center');
+          } else if (col.key === 'situacao') {
+            td.innerHTML = renderSituacaoBadge(row[col.key]);
           } else {
             td.textContent = formatValue(col.key, row[col.key]);
           }
